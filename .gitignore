@@ -1,0 +1,10 @@
+node_modules/
+dist/
+artifacts/
+.test-work/
+.env
+.env.*
+*.log
+*.pem
+.DS_Store
+Thumbs.db

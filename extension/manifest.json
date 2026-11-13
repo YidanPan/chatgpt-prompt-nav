@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "ChatGPT 提示词导航",
+  "version": "1.2.1",
+  "description": "左侧短横线导航：自动读取当前聊天的全部提问，大字悬浮预览，点击跳转。",
+  "minimum_chrome_version": "114",
+  "icons": {"16":"icons/icon16.png","32":"icons/icon32.png","48":"icons/icon48.png","128":"icons/icon128.png"},
+  "content_scripts": [{
+    "matches": ["https://chatgpt.com/*","https://chat.openai.com/*"],
+    "js": ["history.js","navigation.js","styles.js","content.js"],
+    "run_at": "document_idle"
+  }]
+}

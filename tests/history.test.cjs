@@ -1,0 +1,31 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const box={URLSearchParams,AbortController,DOMException,setTimeout,clearTimeout,location:{pathname:'/',search:''}};
+vm.createContext(box);vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../extension/history.js'),'utf8'),box);const H=box.PromptHistory;
+const msg=(i,role='user')=>({id:'message-'+i,author:{role},content:{parts:['提问 '+i]},metadata:{}});
+assert.equal(H.context('/g/g-p-123abc-zh/c/1234567890123456','').project,'g-p-123abc');
+assert.equal(H.context('/',''),null);
+const mapping={root:{parent:null},a:{parent:'root',message:msg(1)},b:{parent:'a',message:msg(2,'assistant')},old:{parent:'a',message:msg(3)},live:{parent:'b',message:msg(4)}};
+assert.equal(H.legacy({mapping,current_node:'live'}).map(p=>p.id).join(','),'message-1,message-4');
+assert.throws(()=>H.legacy({mapping,current_node:'missing'}));
+assert.equal(H.prompts([{...msg(1),metadata:{is_visually_hidden_from_conversation:true}}]).length,0);
+assert.equal(H.text({content:{parts:[{content_type:'image_asset_pointer',asset_pointer:'private'}]}}),'图片或附件提问');
+assert.equal(H.merge([{id:'b',text:'b'}],[{id:'a',text:'a'},{id:'b',text:'b'}]).map(p=>p.id).join(','),'a,b');
+const response=(data,status=200)=>({ok:status===200,status,json:async()=>data});
+(async()=>{
+ const calls=[];let full=false;
+ const fetcher=async(url,options)=>{
+  calls.push(url);assert.equal(options.method,'GET');assert.equal(options.redirect,'error');assert.ok(url.startsWith('/'));assert.equal(options.credentials,'include');
+  if(url==='/api/auth/session')return response({accessToken:'test-only-token'});
+  assert.equal(options.headers.Authorization,'Bearer test-only-token');
+  const parsed=new URL(url,'https://chatgpt.com'),before=parsed.searchParams.get('before');
+  const first=before==='100'?0:before==='200'?100:200,last=first===200?250:first+100;
+  return response({messages:Array.from({length:last-first},(_,i)=>msg(i+first)),page_info:{has_previous_page:first>0,start_cursor:String(first)}});
+ };
+ const result=await H.load({id:'test',project:'',owner:''},{fetcher,onPage:(items,done)=>{full=done;}});
+ assert.equal(result.length,250);assert.equal(result[0].id,'message-0');assert.equal(result[249].id,'message-249');assert.equal(full,true);assert.equal(calls.length,4);
+ let old=await H.load({id:'test'},{bootstrapToken:'fake',fetcher:async url=>url.startsWith('/backend-api/conversations/')?response({},404):response({mapping,current_node:'live'})});assert.equal(old.length,2);
+ let count=0;
+ await assert.rejects(H.load({id:'test'},{bootstrapToken:'fake',fetcher:async()=>{count++;return response({messages:[msg(count)],page_info:{has_previous_page:true,start_cursor:'same'}});}}),/没有继续/);
+ const abort=new AbortController();abort.abort();await assert.rejects(H.load({id:'test'},{signal:abort.signal,bootstrapToken:'fake',fetcher:async()=>{throw new Error('should not fetch');}}),/已取消/);
+ console.log('PASS: full 250-prompt pagination, active legacy branch, incomplete/cyclic history rejection, ID ordering, aborts, text extraction, same-origin GET only');
+})().catch(e=>{console.error(e);process.exitCode=1;});

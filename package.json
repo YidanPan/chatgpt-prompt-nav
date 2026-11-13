@@ -1,0 +1,15 @@
+{
+  "name": "chatgpt-prompt-nav",
+  "version": "1.2.1",
+  "private": true,
+  "description": "Minimal ChatGPT prompt navigation rail for Chrome",
+  "license": "MIT",
+  "engines": {"node": ">=22"},
+  "scripts": {
+    "check": "node scripts/check.cjs",
+    "test": "node tests/history.test.cjs",
+    "test:browser": "node tests/browser/alignment.test.cjs && node tests/browser/full-history.test.cjs",
+    "package": "node scripts/package.cjs"
+  },
+  "devDependencies": {"playwright": "1.65.0"}
+}
