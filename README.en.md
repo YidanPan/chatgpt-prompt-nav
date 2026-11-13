@@ -13,6 +13,7 @@ A small Chrome extension that adds a vertical rail of short lines to the left ed
 - Large 18px hover previews, up to 520px wide, with scrollable long text.
 - Attempts to locate virtualized messages that are not mounted in the page yet.
 - Supports keyboard navigation and light/dark themes, while preserving ChatGPT's own sidebar.
+- Click the extension's toolbar icon to customize normal and highlighted line colors. Changes are saved locally, applied across open chat tabs, and can be reset to the theme defaults.
 
 ## Install
 
@@ -27,7 +28,7 @@ To update, replace the extension files, reload the extension on the extensions p
 
 ## Privacy and limitations
 
-Requests use your existing session and go only to the current ChatGPT origin. There is no external backend, telemetry, persistent chat storage, or additional extension permission. Tokens are used in memory and are not written to logs or files. No API key is required. The extension does not send, edit, or delete messages.
+Requests use your existing session and go only to the current ChatGPT origin. There is no external backend, telemetry, or persistent chat storage. The only extension permission is `storage`, used to store the two color preferences locally, without cloud sync. Tokens are used in memory and are not written to logs or files. No API key is required. The extension does not send, edit, or delete messages.
 
 ChatGPT's private web endpoints and DOM can change. Incomplete history reads are explicitly reported. Temporary chats can only use prompts already rendered in the page. Virtualized-message navigation may take a few seconds or fail on unsupported layouts. Manual interaction cancels alignment. Physical scroll boundaries may prevent exact top alignment near the end of a short conversation.
 
@@ -48,7 +49,7 @@ npm run package
 
 On Linux, use `npx playwright install --with-deps chromium` if dependencies are missing. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select an existing test browser. Tests run in isolated profiles against intercepted synthetic pages, without accessing your usual browser profile.
 
-Packaging requires Python 3 and produces `dist/chatgpt-prompt-nav-v1.2.1.zip`. See [CONTRIBUTING.md](CONTRIBUTING.md) and [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
+Packaging requires Python 3 and produces `dist/chatgpt-prompt-nav-v1.3.0.zip`. See [CONTRIBUTING.md](CONTRIBUTING.md) and [ACKNOWLEDGMENTS.md](ACKNOWLEDGMENTS.md).
 
 ## License
 

@@ -13,28 +13,36 @@
 - **大字预览**：18px 字号、520px 宽度；鼠标可移入预览框，滚动阅读完整长提示词。
 - **适应长对话**：未渲染的消息会尝试自动定位；横线间距按数量调整，特别长的列表可单独滚动。
 - **键盘和主题**：聚焦横线后，可按上下方向键、Home / End 选择，Enter 跳转；跟随页面深浅色。
+- **自定义颜色**：点击 Chrome 工具栏里的插件图标，分别选择普通短横线和高亮短横线的颜色，打开的聊天即时更新；支持一键恢复默认。
 
-保留 ChatGPT 原生侧栏。没有聊天管理、搜索、分组、置顶、设置页面或统计服务。
+保留 ChatGPT 原生侧栏。没有聊天管理、搜索、分组、置顶或统计服务。
 
 ## 安装到 Chrome
 
-1. 在 [Releases](https://github.com/YidanPan/chatgpt-prompt-nav/releases/latest) 下载 `chatgpt-prompt-nav-v1.2.1.zip` 并解压。
+1. 在 [Releases](https://github.com/YidanPan/chatgpt-prompt-nav/releases/latest) 下载 `chatgpt-prompt-nav-v1.3.0.zip` 并解压。
 2. Chrome 地址栏输入 `chrome://extensions`，开启右上角的「开发者模式」。
 3. 点击「加载已解压的扩展程序」，选择解压后**包含 `manifest.json` 的文件夹**。
 4. 打开或刷新 [ChatGPT](https://chatgpt.com/)，等待历史载入。
 
 也可以下载仓库源码，并在第 3 步选择其中的 **`extension/`** 文件夹。不需要安装 Node.js 或运行构建命令。请保留加载时选择的文件夹。
 
-**更新**：将新版本文件替换到原文件夹，在扩展管理页点击插件的刷新按钮，随后再次刷新 ChatGPT 标签页。当前版本为 **1.2.1**。
+**更新**：将新版本文件替换到原文件夹，在扩展管理页点击插件的刷新按钮，随后再次刷新 ChatGPT 标签页。当前版本为 **1.3.0**。
+
+### 更换短横线颜色
+
+点击 Chrome 工具栏中的「ChatGPT 提示词导航」图标；未固定时，可先在拼图形状的扩展菜单中找到它。弹窗里可分别选择「普通短横线」和「当前提问 / 悬停」的颜色，自动保存并在所有已打开的聊天中生效。点击「恢复默认」后重新跟随页面的深浅色。自定义颜色在两种主题下保持一致。
+
+![短横线颜色设置](docs/colors.png)
 
 ## 隐私与工作原理
 
 插件通过 ChatGPT 本站的只读历史接口建立当前聊天的提问索引，支持分页历史和旧版对话树。使用已有登录会话，无需 API Key。
 
-- 仅匹配 `https://chatgpt.com/*` 和旧域名 `https://chat.openai.com/*`；不申请额外扩展权限。
+- 仅匹配 `https://chatgpt.com/*` 和旧域名 `https://chat.openai.com/*`；仅申请 `storage` 权限保存颜色偏好。
 - 请求仅发送到当前 ChatGPT 域名，不使用第三方后端、遥测或广告。
 - 登录凭据只在浏览器内存中用于历史读取，不保存到文件、日志或扩展存储。
 - 提问索引保留在当前标签页内存中；切换聊天或刷新后重新建立。
+- 自定义的两项颜色保存在此 Chrome 资料的本机扩展存储中，不使用云同步；不在该存储中保存聊天或登录凭据。
 - 不修改、发送、删除聊天，也不会把对话内容包含在本项目的测试或发布包里。
 
 ## 兼容性与限制
@@ -60,7 +68,7 @@ npm run package
 
 Linux 上首次安装浏览器可使用 `npx playwright install --with-deps chromium`。如需使用已有的测试用 Chromium，可设置 `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`。测试使用独立资料目录和拦截生成的网页，不访问你的 Chrome 资料或真实聊天。
 
-打包需要 Python 3。`npm run package` 生成包含插件、说明和许可证的 `dist/chatgpt-prompt-nav-v1.2.1.zip`。不要把仓库根目录当作插件文件夹加载。
+打包需要 Python 3。`npm run package` 生成包含插件、说明和许可证的 `dist/chatgpt-prompt-nav-v1.3.0.zip`。不要把仓库根目录当作插件文件夹加载。
 
 ```text
 extension/       插件源码与图标

@@ -2,7 +2,7 @@
   'use strict';
   if(document.getElementById('chatgpt-prompt-rail'))return;
   const H=PromptHistory;
-  const host=document.createElement('div');host.id='chatgpt-prompt-rail';host.dataset.version='1.2.1';
+  const host=document.createElement('div');host.id='chatgpt-prompt-rail';host.dataset.version='1.3.0';
   const root=host.attachShadow({mode:'open'});
   const style=document.createElement('style');style.textContent=PromptRailStyles;
   const rail=document.createElement('nav');rail.className='rail';rail.hidden=true;rail.setAttribute('aria-label','当前聊天的提示词导航');
@@ -11,6 +11,18 @@
   const text=document.createElement('span');text.className='text';text.tabIndex=0;preview.append(number,text);
   const status=document.createElement('div');status.className='status';status.hidden=true;status.setAttribute('role','status');
   root.append(style,rail,preview,status);document.documentElement.append(host);
+  let colorRevision=0;
+  function applyColors(raw) {
+    const value=PromptColors.normalize(raw);
+    for(const name of ['tick','active']) {
+      if(value)host.style.setProperty('--'+name,value[name]);else host.style.removeProperty('--'+name);
+    }
+  }
+  chrome.storage.onChanged.addListener((changes,area)=>{
+    if(area==='local'&&changes[PromptColors.KEY]){colorRevision++;applyColors(changes[PromptColors.KEY].newValue);}
+  });
+  const initialColorRevision=colorRevision;
+  chrome.storage.local.get(PromptColors.KEY).then(data=>{if(colorRevision===initialColorRevision)applyColors(data[PromptColors.KEY]);}).catch(()=>{});
   const darkMedia=matchMedia('(prefers-color-scheme: dark)'),reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
   const userSelector='[data-message-author-role="user"], [data-chatgpt-search-unit-key$=":user"], [data-content-search-unit-key$=":user"], [data-user-message-bubble]';
   let entries=[],visible=[],buttons=[],main=null,currentKey='',ctx=null,source=[],complete=false;

@@ -7,9 +7,10 @@ const manifest=JSON.parse(fs.readFileSync(path.join(root,'extension/manifest.jso
 const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8'));
 assert.equal(manifest.version,pkg.version);
 assert.equal(manifest.manifest_version,3);
-assert.ok(!manifest.permissions?.length);
-for(const file of manifest.content_scripts.flatMap(s=>s.js)) {
+assert.deepEqual(manifest.permissions,['storage']);
+for(const file of [...new Set([...manifest.content_scripts.flatMap(s=>s.js),'popup.js'])]) {
   execFileSync(process.execPath,['--check',path.join(root,'extension',file)],{stdio:'inherit'});
 }
 for(const file of Object.values(manifest.icons))assert.ok(fs.existsSync(path.join(root,'extension',file)));
+assert.ok(fs.existsSync(path.join(root,'extension',manifest.action.default_popup)));
 console.log('PASS: manifest, version, icons and JavaScript syntax');

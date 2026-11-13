@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0
+
+- Add a toolbar popup to customize normal and highlighted line colors.
+- Save color preferences locally and apply them across open ChatGPT tabs without reloading.
+- Restore automatic light/dark theme colors with one click.
+- Add the `storage` permission for color preferences only; chat history and credentials remain in memory.
+
 ## 1.2.1
 
 - Align the actual prompt bubble rather than its quotation/attachment container.

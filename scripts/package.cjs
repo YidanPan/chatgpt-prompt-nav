@@ -16,7 +16,8 @@ with ZipFile(out,'w',ZIP_DEFLATED) as z:
         if p.is_file(): z.write(p,'chatgpt-prompt-nav/'+p.relative_to(root/'extension').as_posix())
     for name in ['LICENSE','README.md','README.en.md']:
         z.write(root/name,'chatgpt-prompt-nav/'+name)
-    z.write(root/'docs/preview.png','chatgpt-prompt-nav/docs/preview.png')
+    for p in sorted((root/'docs').glob('*.png')):
+        z.write(p,'chatgpt-prompt-nav/docs/'+p.name)
     for name in ['ACKNOWLEDGMENTS.md','CONTRIBUTING.md']:
         z.write(root/name,'chatgpt-prompt-nav/'+name)
 print(out)
